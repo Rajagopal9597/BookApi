@@ -17,16 +17,14 @@ router.get('/getbooks', async (req, res) => {
 router.get('/getbook/:id', async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);
-    if (book) {
-      res.status(200).json({status:"success",data:book});
-    } else {
-      res.status(404).json({ error: 'Book not found' });
+    if (!book) {
+      return res.status(404).json({ status: "failure", error: 'Book not found' });
     }
+    res.status(200).json({ status: "success", data: book });
   } catch (error) {
-    res.status(500).json({ status:"failure", error: error });
+    res.status(500).json({ status: "failure", error: error });
   }
 });
-
 
 router.post('/insert', async (req, res) => {
   try {
@@ -69,7 +67,7 @@ router.delete('/deletebook/:id', async (req, res) => {
   try {
     const deletedBook = await Book.findByIdAndDelete(req.params.id);
     if (deletedBook) {
-      res.status(200).json({status:"succeess",data:deletedBook});
+      res.status(200).json({status:"success",data:deletedBook});
     } else {
       res.status(404).json({ status:"failure",error: 'Book not found' });
     }
