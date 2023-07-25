@@ -3,7 +3,7 @@ const router = express.Router();
 const Book = require('../models/Book');
 
 
-router.get('/getbooks', async (req, res) => {
+/*router.get('/getbooks', async (req, res) => {
   try {
     const { limit, offset } = req.query;
     console.log(req.query)
@@ -11,6 +11,25 @@ router.get('/getbooks', async (req, res) => {
     res.status(200).json({status:"success",data:books});
   } catch (error) {
     res.status(500).json({ status:"failure", error: error });
+  }
+});*/
+router.get('/getbooks', async (req, res) => {
+  try {
+    const { limit = 10, offset = 0, sortField, sortOrder } = req.query;
+
+    // Create a sort object based on the query parameters
+    const sortOptions = {};
+    if (sortField && sortOrder) {
+      sortOptions[sortField] = sortOrder === 'asc' ? 1 : -1;
+    }
+    const books = await Book.find()
+      .sort(sortOptions)
+      .limit(parseInt(limit))
+      .skip(parseInt(offset));
+
+    res.status(200).json({ status: 'success', data: books });
+  } catch (error) {
+    res.status(500).json({ status: 'failure', error: error });
   }
 });
 
